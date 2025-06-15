@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "vue.volar",
+    "junstyle.php-cs-fixer",
+    "bmewburn.vscode-intelephense-client",
+    "amiralizadeh9480.laravel-extra-intellisense",
+    "editorconfig.editorconfig",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "yzhang.markdown-all-in-one",
+    "bierner.markdown-mermaid",
+    "foxundermoon.shell-format",
+    "eamodio.gitlens",
+    "oderwat.indent-rainbow",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

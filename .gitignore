@@ -1,0 +1,61 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+logs
+npm-debug.log
+yarn-error.log
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Node dependencies
+node_modules
+
+# Nuxt.js
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Laravel
+/backend/.phpunit.cache
+/backend/node_modules
+/backend/public/build
+/backend/public/hot
+/backend/public/storage
+/backend/storage/*.key
+/backend/storage/pail
+/backend/vendor
+/backend/.env
+/backend/.env.backup
+/backend/.env.production
+/backend/.phpactor.json
+/backend/.phpunit.result.cache
+/backend/auth.json
+
+# Test coverage
+coverage
+.nyc_output
+/frontend/coverage
+/backend/coverage
+
+# Vitest
+/frontend/__snapshots__
+/frontend/vitest-*.json
+
+# PHPStan
+/backend/.phpstan-cache
+
+# AWS
+.aws-sam/
+samconfig.toml
+packaged.yaml
+.aws/cloudformation/*.packaged.yaml
+.aws/cloudformation/outputs/
+.aws/credentials
+.aws/config

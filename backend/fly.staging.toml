@@ -1,0 +1,55 @@
+# fly.toml app configuration file for staging environment
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'laravel-nuxt-template-backend-staging-unique'
+primary_region = 'nrt'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
+
+[build]
+  dockerfile = 'Dockerfile.fly'
+
+[env]
+  APP_ENV = 'staging'
+  BROADCAST_DRIVER = 'log'
+  CACHE_DRIVER = 'file'
+  DB_CONNECTION = "pgsql"
+  # データベース接続設定
+  DB_HOST = "laravel-nuxt-template-db-staging-unique.flycast"
+  DB_PORT = "5432"
+  DB_DATABASE = "laravel_nuxt_template_staging"
+  # 環境変数DATABASE_URLの設定を優先して使用するようにする
+  LOG_CHANNEL = 'stderr'
+  LOG_LEVEL = 'debug'
+  LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
+  QUEUE_CONNECTION = 'database'
+  SESSION_DRIVER = 'cookie'
+  # PHPの共有メモリ設定
+  PHP_MEMORY_LIMIT = "128M"
+  PHP_SESSION_SAVE_PATH = "/tmp"
+  PHP_SYS_TEMP_DIR = "/tmp"
+  PHP_UPLOAD_TMP_DIR = "/tmp"
+
+[[mounts]]
+  source = 'laravel_nuxt_template_storage_stg'
+  destination = '/var/www/html/storage'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 25
+    soft_limit = 20
+
+[[vm]]
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 512
