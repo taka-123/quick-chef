@@ -112,7 +112,12 @@ class AuthController extends Controller
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(Auth::guard('api')->refresh());
+        try {
+            $token = Auth::guard('api')->refresh();
+            return $this->respondWithToken($token);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token refresh failed', 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

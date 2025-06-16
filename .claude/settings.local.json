@@ -13,7 +13,11 @@
       "Bash(rm:*)",
       "Bash(yarn install)",
       "Bash(yarn install:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(grep:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
