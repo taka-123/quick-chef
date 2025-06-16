@@ -19,8 +19,9 @@ NC='\033[0m' # No Color
 PROJECT_NAME="${1:-$(basename "$PWD")}"
 
 # 初回実行かどうかの判定
+# テンプレート初期化が完了済みかどうかをREADME.mdで判定
 IS_FIRST_RUN=false
-if [ ! -f ".setup-completed" ]; then
+if grep -q "Laravel + Nuxt + PostgreSQL テンプレート" README.md && ! grep -q "quick-chef" README.md; then
   IS_FIRST_RUN=true
 fi
 
@@ -159,11 +160,41 @@ if ! command -v docker &>/dev/null; then
 fi
 success "Docker が見つかりました"
 
-# Docker Composeのチェック
-if ! command -v docker-compose &>/dev/null; then
+# Docker Composeのチェック（V2対応）
+if ! command -v docker-compose &>/dev/null && ! docker compose version &>/dev/null; then
   error "Docker Compose がインストールされていません。https://docs.docker.com/compose/install/ からインストールしてください。"
 fi
-success "Docker Compose が見つかりました"
+
+# Docker Composeコマンドの決定
+if command -v docker-compose &>/dev/null; then
+  DOCKER_COMPOSE="docker-compose"
+else
+  DOCKER_COMPOSE="docker compose"
+fi
+success "Docker Compose が見つかりました ($DOCKER_COMPOSE)"
+
+info "注意: WWWUSER/WWWGROUPをルート.envファイルに自動設定されます"
+
+# ルートディレクトリの.envファイル作成（Docker Compose用）
+if [ ! -f ".env" ]; then
+  info "ルート.envファイルを作成中..."
+  cat >.env <<EOF
+# Docker Compose用の環境変数
+WWWUSER=$(id -u)
+WWWGROUP=$(id -g)
+
+# アプリケーション設定
+APP_PORT=8000
+FRONTEND_PORT=3000
+FORWARD_DB_PORT=5432
+
+# データベース設定（docker-compose.yml用）
+DB_DATABASE=laravel_nuxt_template
+DB_USERNAME=sail
+DB_PASSWORD=password
+EOF
+  success "ルート.envファイルを作成しました"
+fi
 
 # .envファイルの設定
 info "環境設定ファイルの準備中..."
@@ -174,8 +205,13 @@ if [ ! -f "./backend/.env" ]; then
     cp ./backend/.env.example ./backend/.env
     # アプリケーション名の設定
     sed -i.bak "s/APP_NAME=.*/APP_NAME=\"${PROJECT_NAME}\"/" ./backend/.env
+    # WWWUSER/WWWGROUPの設定を追加
+    echo "" >>./backend/.env
+    echo "# Laravel Sail用のユーザー設定" >>./backend/.env
+    echo "WWWUSER=$(id -u)" >>./backend/.env
+    echo "WWWGROUP=$(id -g)" >>./backend/.env
     rm -f ./backend/.env.bak
-    success "バックエンド .env ファイルを作成しました"
+    success "バックエンド .env ファイルを作成しました（WWWUSER/WWWGROUP含む）"
   else
     warning "backend/.env.example が見つかりません。手動で .env ファイルを作成してください。"
   fi
@@ -197,36 +233,35 @@ fi
 
 # Dockerコンテナの起動
 info "Dockerコンテナを起動中..."
-docker-compose up -d || error "Dockerコンテナの起動に失敗しました"
+$DOCKER_COMPOSE up -d || error "Dockerコンテナの起動に失敗しました"
 success "Dockerコンテナを起動しました"
 
 # バックエンドの依存関係インストール
 info "バックエンドの依存関係をインストール中..."
-docker-compose exec backend composer install || warning "Composerインストールに問題が発生しました"
+$DOCKER_COMPOSE exec backend composer install || warning "Composerインストールに問題が発生しました"
 success "バックエンドの依存関係をインストールしました"
 
 # アプリケーションキーの生成
 info "Laravelアプリケーションキーを生成中..."
-docker-compose exec backend php artisan key:generate || warning "アプリケーションキーの生成に問題が発生しました"
+$DOCKER_COMPOSE exec backend php artisan key:generate || warning "アプリケーションキーの生成に問題が発生しました"
 success "アプリケーションキーを生成しました"
 
 # データベースマイグレーション
 info "データベースマイグレーションを実行中..."
-docker-compose exec backend php artisan migrate || warning "マイグレーションに問題が発生しました"
+$DOCKER_COMPOSE exec backend php artisan migrate || warning "マイグレーションに問題が発生しました"
 success "データベースマイグレーションを実行しました"
 
 # シードデータの投入
 info "初期データを投入中..."
-docker-compose exec backend php artisan db:seed || warning "シードデータの投入に問題が発生しました"
+$DOCKER_COMPOSE exec backend php artisan db:seed || warning "シードデータの投入に問題が発生しました"
 success "初期データを投入しました"
 
 # フロントエンドの依存関係インストール
 info "フロントエンドの依存関係をインストール中..."
-docker-compose exec frontend yarn install || warning "Yarnインストールに問題が発生しました"
+$DOCKER_COMPOSE exec frontend yarn install || warning "Yarnインストールに問題が発生しました"
 success "フロントエンドの依存関係をインストールしました"
 
-# セットアップ完了フラグの作成
-touch .setup-completed
+# セットアップ完了
 
 # 完了メッセージ
 echo ""
@@ -249,8 +284,12 @@ echo "- メールアドレス: test@example.com"
 echo "- パスワード: password"
 echo ""
 echo "🔧 開発コマンド："
-echo "- バックエンドログ: docker-compose logs -f backend"
-echo "- フロントエンドログ: docker-compose logs -f frontend"
-echo "- 環境停止: docker-compose down"
+echo "- バックエンドログ: docker compose logs -f backend"
+echo "- フロントエンドログ: docker compose logs -f frontend"
+echo "- 環境停止: docker compose down"
+echo ""
+echo "💡 ヒント："
+echo "- WWWUSER/WWWGROUPは backend/.env に自動設定済み"
+echo "- 環境変数の警告は表示されません"
 echo ""
 echo "Happy coding! 🚀"
