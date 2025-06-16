@@ -44,8 +44,9 @@ class PostApiTest extends TestCase
                         'updated',
                     ]
                 ],
-                'meta',
-                'links',
+                'current_page',
+                'per_page',
+                'total',
             ]);
     }
 
@@ -172,8 +173,12 @@ class PostApiTest extends TestCase
         $response->assertStatus(200);
 
         // 論理削除されていることを確認（deleted列がNULLでないこと）
-        $this->assertSoftDeleted('posts', [
+        $this->assertDatabaseHas('posts', [
             'id' => $post->id,
+        ]);
+        $this->assertDatabaseMissing('posts', [
+            'id' => $post->id,
+            'deleted' => null,
         ]);
     }
 

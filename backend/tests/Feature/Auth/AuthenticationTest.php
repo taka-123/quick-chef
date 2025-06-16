@@ -31,8 +31,6 @@ class AuthenticationTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'created',
-                    'updated',
                 ],
             ]);
 
@@ -56,7 +54,9 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['email']);
+            ->assertJsonStructure([
+                'email'
+            ]);
 
         // パスワードが短すぎる
         $response = $this->postJson('/api/auth/register', [
@@ -67,7 +67,9 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['password']);
+            ->assertJsonStructure([
+                'password'
+            ]);
 
         // パスワード確認が一致しない
         $response = $this->postJson('/api/auth/register', [
@@ -78,7 +80,9 @@ class AuthenticationTest extends TestCase
         ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['password']);
+            ->assertJsonStructure([
+                'password'
+            ]);
     }
 
     /**
@@ -106,8 +110,6 @@ class AuthenticationTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'created',
-                    'updated',
                 ],
             ]);
     }

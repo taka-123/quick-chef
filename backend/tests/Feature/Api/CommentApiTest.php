@@ -71,7 +71,7 @@ class CommentApiTest extends TestCase
         ];
 
         // 認証済みユーザーとしてAPI呼び出し
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($user, 'api')
             ->postJson("/api/posts/{$post->id}/comments", $commentData);
 
         // レスポンスの検証
@@ -117,7 +117,7 @@ class CommentApiTest extends TestCase
         ];
 
         // 認証済みユーザーとしてAPI呼び出し
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($user, 'api')
             ->putJson("/api/comments/{$comment->id}", $updateData);
 
         // レスポンスの検証
@@ -155,15 +155,19 @@ class CommentApiTest extends TestCase
         ]);
 
         // 認証済みユーザーとしてAPI呼び出し
-        $response = $this->actingAs($user)
+        $response = $this->actingAs($user, 'api')
             ->deleteJson("/api/comments/{$comment->id}");
 
         // レスポンスの検証
         $response->assertStatus(200);
 
         // 論理削除されていることを確認（deleted列がNULLでないこと）
-        $this->assertSoftDeleted('comments', [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
+        ]);
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
+            'deleted' => null,
         ]);
     }
 
@@ -195,7 +199,7 @@ class CommentApiTest extends TestCase
         ];
 
         // user2としてコメントを更新しようとする
-        $response = $this->actingAs($user2)
+        $response = $this->actingAs($user2, 'api')
             ->putJson("/api/comments/{$comment->id}", $updateData);
 
         // 403 Forbiddenが返されることを確認
@@ -230,15 +234,19 @@ class CommentApiTest extends TestCase
         ]);
 
         // 投稿者としてコメントを削除
-        $response = $this->actingAs($postOwner)
+        $response = $this->actingAs($postOwner, 'api')
             ->deleteJson("/api/comments/{$comment->id}");
 
         // レスポンスの検証
         $response->assertStatus(200);
 
         // 論理削除されていることを確認
-        $this->assertSoftDeleted('comments', [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
+        ]);
+        $this->assertDatabaseMissing('comments', [
+            'id' => $comment->id,
+            'deleted' => null,
         ]);
     }
 }
