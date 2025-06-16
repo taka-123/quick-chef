@@ -17,7 +17,9 @@
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
       "Bash(grep:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git commit:*)",
+      "Bash(YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn --cwd /Users/tf/projects/quick-chef/frontend install)"
     ],
     "deny": []
   }

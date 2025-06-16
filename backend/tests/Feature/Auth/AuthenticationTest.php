@@ -185,8 +185,19 @@ class AuthenticationTest extends TestCase
         // ユーザーを作成してログイン
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user, 'api')
-            ->postJson('/api/auth/refresh');
+        // 実際のJWTトークンを生成
+        $loginResponse = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password', // UserFactoryのデフォルトパスワード
+        ]);
+
+        $loginResponse->assertStatus(200);
+        $token = $loginResponse->json('access_token');
+
+        // トークンを使ってrefresh
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/auth/refresh');
 
         $response->assertStatus(200)
             ->assertJsonStructure([
