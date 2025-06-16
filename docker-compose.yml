@@ -57,7 +57,7 @@ services:
   # PostgreSQL データベース
   pgsql:
     image: "postgres:16"
-    container_name: laravel-nuxt-template-pgsql-main
+    container_name: quick-chef-main
     restart: unless-stopped
     ports:
       - "${FORWARD_DB_PORT:-5432}:5432"

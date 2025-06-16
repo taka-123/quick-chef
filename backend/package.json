@@ -26,9 +26,9 @@
         "@zxing/library": "^0.21.3",
         "jsbarcode": "^3.11.6"
     },
-    "name": "backend",
+    "name": "quick-chef-backend",
     "version": "1.0.0",
-    "description": "このディレクトリには書籍管理システムのバックエンド（Laravel 12.x）が含まれています。",
+    "description": "quick-chef backend application",
     "main": "vite.config.js",
     "directories": {
         "test": "tests"

@@ -1,32 +1,15 @@
-# [PROJECT_NAME] Laravel + Nuxt + PostgreSQL テンプレート
+# quick-chef Laravel + Nuxt + PostgreSQL テンプレート
 
 Laravel 12.x + Nuxt.js 3.16 + PostgreSQL 16.x を使用したモダンなウェブアプリケーションテンプレートです。
 
-> **テンプレートから作成されたプロジェクトの場合**: `[PROJECT_NAME]`部分がプロジェクト名に置き換わり、テンプレート固有の説明が削除されます。
-
 ## 🚀 クイックスタート
 
-### テンプレートから新プロジェクトを作成（推奨）
-
 ```bash
-# 1. GitHubで「Use this template」をクリック、または：
-gh repo create my-new-project --template your-org/laravel-nuxt-template --private
-
-# 2. クローンしてセットアップ（1コマンドで完了）
-git clone https://github.com/your-org/my-new-project.git
-cd my-new-project
-./setup.sh my-new-project
+# 開発環境をセットアップ
+./setup.sh
 ```
 
-### 直接クローンする場合
-
-```bash
-git clone https://github.com/your-org/laravel-nuxt-template.git my-project
-cd my-project
-./setup.sh my-project
-```
-
-**初回実行時**: テンプレートのカスタマイズ + 開発環境セットアップを自動実行  
+**初回実行時**: プロジェクトの初期化 + 開発環境セットアップを自動実行  
 **2 回目以降**: 開発環境セットアップのみ実行
 
 ## テンプレートの特徴
