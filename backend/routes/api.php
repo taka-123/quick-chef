@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\CommentController;
+use App\Http\Controllers\API\FoodRecognitionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,10 @@ Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show')
 
 // 投稿のコメント取得（認証不要）
 Route::get('/posts/{postId}/comments', [CommentController::class, 'index'])->name('comments.index');
+
+// 食材認識エンドポイント（認証不要で開発・テスト用）
+Route::post('/recognize', [FoodRecognitionController::class, 'recognize'])->name('food.recognize');
+Route::post('/recognize-async', [FoodRecognitionController::class, 'recognizeAsync'])->name('food.recognize.async');
 
 // 認証が必要な投稿関連のルート
 Route::group(['middleware' => 'auth:api'], function () {
